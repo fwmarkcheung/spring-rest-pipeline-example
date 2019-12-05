@@ -1,12 +1,11 @@
-# Spring REST Hello World Example
-  
-Article link : https://www.mkyong.com/spring-boot/spring-rest-hello-world-example/
+# Spring Rest - A RESTful API written in Spring Boot
 
-## 1. To run locally 
-```
-$ mvn spring-boot:run
+This is a simple app using Spring Boot as part of [Red Hat OpenShift Application Runtimes](https://middlewareblog.redhat.com/2017/05/05/red-hat-openshift-application-runtimes-and-spring-boot-details-you-want-to-know/).
 
-$ curl -v localhost:8080/api/books
+## Usage to Run Locally
+
+1. `git clone`
+2. `mvn spring-boot:run`
 
 
 This demonstrates how to implement a full end-to-end Jenkins Pipeline for a Java application in OpenShift Container Platform. This sample demonstrates the following capabilities:
@@ -127,14 +126,14 @@ deploymentconfig "spring-rest" created
 rolebinding "jenkins_edit" created
 ```
 
-A _build template_ is provided at `applier/templates/build.yml` that defines all the resources required to build our java app. It includes:
+A _build template_ is provided at `templates/build.yml` that defines all the resources required to build our java app. It includes:
 
 * A `BuildConfig` that defines a `JenkinsPipelineStrategy` build, which will be used to define out pipeline.
 * A `BuildConfig` that defines a `Source` build with `Binary` input. This will build our image.
 
 Deploy the pipeline template in build only.
 ```
-$ oc process -f openshift/templates/build.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-build -p=SOURCE_REPOSITORY_URL="https://github.com/fwmarkcheung/spring-rest-hello-world.git" -p=APPLICATION_SOURCE_REPO="https://github.com/fwmarkcheung/spring-rest-hello-world.git" | oc apply -f-
+$ oc process -f openshift/templates/build.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-build -p=SOURCE_REPOSITORY_URL="https://github.com/fwmarkcheung/spring-rest-pipeline-example.git" -p=APPLICATION_SOURCE_REPO="https://github.com/fwmarkcheung/spring-rest-pipeline-example.git" | oc apply -f-
 buildconfig "spring-rest-pipeline" created
 buildconfig "spring-rest" created
 ```
