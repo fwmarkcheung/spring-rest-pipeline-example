@@ -64,6 +64,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- To enable Spring Boot Actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

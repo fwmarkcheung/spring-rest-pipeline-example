@@ -7,6 +7,8 @@ This is a simple app using Spring Boot as part of [Red Hat OpenShift Application
 1. `git clone`
 2. `mvn spring-boot:run`
 
+curl -v localhost:8080/api/books
+
 
 This demonstrates how to implement a full end-to-end Jenkins Pipeline for a Java application in OpenShift Container Platform. This sample demonstrates the following capabilities:
 
@@ -106,19 +108,19 @@ This template should be instantiated once in each of the namespaces that our app
 
 Deploy the deployment template to all three projects.
 ```
-$ oc process -f openshift/templates/deployment.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-dev -p=SA_NAMESPACE=basic-spring-boot-build -p=READINESS_PATH="/health" -p=READINESS_RESPONSE="status.:.UP"  | oc apply -f-
+$ oc process -f openshift/templates/deployment.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-dev -p=SA_NAMESPACE=basic-spring-boot-build -p=READINESS_PATH="/api/health" -p=READINESS_RESPONSE="status.:.UP"  | oc apply -f-
 service "spring-rest" created
 route "spring-rest" created
 imagestream "spring-rest" created
 deploymentconfig "spring-rest" created
 rolebinding "jenkins_edit" configured
-$ oc process -f openshift/templates/deployment.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-stage -p=SA_NAMESPACE=basic-spring-boot-build -p=READINESS_PATH="/health" -p=READINESS_RESPONSE="status.:.UP" | oc apply -f-
+$ oc process -f openshift/templates/deployment.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-stage -p=SA_NAMESPACE=basic-spring-boot-build -p=READINESS_PATH="/api/health" -p=READINESS_RESPONSE="status.:.UP" | oc apply -f-
 service "spring-rest" created
 route "spring-rest" created
 imagestream "spring-rest" created
 deploymentconfig "spring-rest" created
 rolebinding "jenkins_edit" created
-$ oc process -f openshift/templates/deployment.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-prod -p=SA_NAMESPACE=basic-spring-boot-build -p=READINESS_PATH="/health" -p=READINESS_RESPONSE="status.:.UP" | oc apply -f-
+$ oc process -f openshift/templates/deployment.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-prod -p=SA_NAMESPACE=basic-spring-boot-build -p=READINESS_PATH="/api/health" -p=READINESS_RESPONSE="status.:.UP" | oc apply -f-
 service "spring-rest" created
 route "spring-rest" created
 imagestream "spring-rest" created
