@@ -1,6 +1,5 @@
 # Spring Rest - A RESTful API written in Spring Boot
 
-This is a simple app using Spring Boot as part of [Red Hat OpenShift Application Runtimes](https://middlewareblog.redhat.com/2017/05/05/red-hat-openshift-application-runtimes-and-spring-boot-details-you-want-to-know/).
 
 ## Usage to Run Locally
 
@@ -8,6 +7,8 @@ This is a simple app using Spring Boot as part of [Red Hat OpenShift Application
 2. `mvn spring-boot:run`
 
 curl -v localhost:8080/api/books
+curl -v localhost:8080/api/health - use for readiness probe
+
 
 
 This demonstrates how to implement a full end-to-end Jenkins Pipeline for a Java application in OpenShift Container Platform. This sample demonstrates the following capabilities:
@@ -16,8 +17,6 @@ This demonstrates how to implement a full end-to-end Jenkins Pipeline for a Java
 * Running both custom and oob Jenkins slaves as pods in OpenShift
 * "One Click" instantiation of a Jenkins Pipeline using OpenShift's Jenkins Pipeline Strategy feature
 * Building a Jenkins pipeline with library functions from our [pipeline-library](https://github.com/redhat-cop/pipeline-library)
-* Automated rollout using the [openshift-appler](https://github.com/redhat-cop/openshift-applier) project.
-
 
 ## Architecture
 
@@ -50,8 +49,6 @@ This project includes a sample `Jenkinsfile` pipeline script that could be inclu
 * The project is built with Maven
 * The OpenShift projects that represent the Application's lifecycle stages are of the naming format: `<app-name>-dev`, `<app-name>-stage`, `<app-name>-prod`.
 
-This pipeline defaults to use our [Spring Boot Demo App](https://github.com/redhat-cop/spring-rest).
-
 ## Bill of Materials
 
 * One or Two OpenShift Container Platform Clusters
@@ -59,7 +56,7 @@ This pipeline defaults to use our [Spring Boot Demo App](https://github.com/redh
   * [Red Hat OpenJDK 1.8](https://access.redhat.com/containers/?tab=overview#/registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift) image is required
 * Access to GitHub
 
-## Manual Deployment Instructions
+## Deployment Instructions
 
 ### 1. Create Lifecycle Stages
 
@@ -80,7 +77,7 @@ projectrequest "basic-spring-boot-stage" created
 projectrequest "basic-spring-boot-prod" created
 ```
 
-### 2. Stand up Jenkins master in dev
+### 2. Stand up Jenkins master in build project
 
 For this step, the OpenShift default template set provides exactly what we need to get jenkins up and running.
 
@@ -94,7 +91,7 @@ service "jenkins-jnlp" created
 service "jenkins" created
 ```
 
-### 4. Instantiate Pipeline
+
 
 A _deploy template_ is provided at `openshift/templates/deployment.yml` that defines all of the resources required to run our Tomcat application. It includes:
 
@@ -103,6 +100,9 @@ A _deploy template_ is provided at `openshift/templates/deployment.yml` that def
 * An `ImageStream`
 * A `DeploymentConfig`
 * A `RoleBinding` to allow Jenkins to deploy in each namespace.
+
+
+### 3. Instantiate deployment template for each environment
 
 This template should be instantiated once in each of the namespaces that our app will be deployed to. For this purpose, we have created a param file to be fed to `oc process` to customize the template for each environment.
 
@@ -133,6 +133,8 @@ A _build template_ is provided at `templates/build.yml` that defines all the res
 * A `BuildConfig` that defines a `JenkinsPipelineStrategy` build, which will be used to define out pipeline.
 * A `BuildConfig` that defines a `Source` build with `Binary` input. This will build our image.
 
+### 4. Instantiate Pipeline
+
 Deploy the pipeline template in build only.
 ```
 $ oc process -f openshift/templates/build.yml -p=APPLICATION_NAME=basic-spring-boot -p NAMESPACE=basic-spring-boot-build -p=SOURCE_REPOSITORY_URL="https://github.com/fwmarkcheung/spring-rest-pipeline-example.git" -p=APPLICATION_SOURCE_REPO="https://github.com/fwmarkcheung/spring-rest-pipeline-example.git" | oc apply -f-
@@ -140,7 +142,7 @@ buildconfig "spring-rest-pipeline" created
 buildconfig "spring-rest" created
 ```
 
-At this point you should be able to go to the Web Console and follow the pipeline by clicking in your `basic-spring-boot-build` project, and going to *Builds* -> *Pipelines*. At several points you will be prompted for input on the pipeline. You can interact with it by clicking on the _input required_ link, which takes you to Jenkins, where you can click the *Proceed* button. By the time you get through the end of the pipeline you should be able to visit the Route for your app deployed to the `myapp-prod` project to confirm that your image has been promoted through all stages.
+The pipeline build should start automatically or you can do it manually by going to the Web Console and follow the pipeline by clicking in your `basic-spring-boot-build` project, and going to *Builds* -> *Pipelines*. At several points you will be prompted for input on the pipeline. You can interact with it by clicking on the _input required_ link, which takes you to Jenkins, where you can click the *Proceed* button. By the time you get through the end of the pipeline you should be able to visit the Route for your app deployed to the `myapp-prod` project to confirm that your image has been promoted through all stages.
 
 ## Cleanup
 
