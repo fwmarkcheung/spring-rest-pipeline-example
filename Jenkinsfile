@@ -49,12 +49,11 @@ pipeline {
       }
     }
 
-    // Run Maven unit tests
-//    stage('Unit Test'){
-//      steps {
-//        sh "mvn -B test -f ${POM_FILE}"
-//      }
-//    }
+    stage('Unit Test') {
+      steps {
+        echo "TODO: Unit test"
+      }
+    }
 
     // Build Container Image using the artifacts produced in previous stages
     stage('Build Container Image'){
@@ -84,6 +83,12 @@ pipeline {
     stage ('Verify Deployment to Dev') {
       steps {
         verifyDeployment(projectName: env.DEV, targetApp: env.APP_NAME)
+      }
+    }
+
+    stage('Integration Test') {
+      steps {
+        echo "TODO: Add application integration testing, verify db connectivity, rest calls ..."
       }
     }
 
